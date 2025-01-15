@@ -7,17 +7,17 @@ class AnimalFoodChecker:
     def __init__(self):
         self.animal_restrictions = {
             "chat": {
-                "ingredients_interdits": ["chocolate", "theobromine", "caffeine", "coffee", "tea", "alcohol", "ethanol", "onions", "garlic", "chives", "leeks", "grapes", "raisins", "sultanas", "currants", "macadamia nuts", "avocado", "persin", "raw eggs", "raw meat", "raw fish", "bones", "fat trimmings", "yeast dough", "xylitol", "artificial sweeteners", "milk", "cream", "cheese", "dairy products", "mushrooms", "salt", "sodium", "sugary foods", "fatty foods"],
+                "ingredients_interdits": ["chocolate", "cacao", "kakao", "theobromine", "caffeine", "coffee", "tea", "alcohol", "ethanol", "onions", "garlic", "chives", "leeks", "grapes", "raisins", "sultanas", "currants", "macadamia nuts", "avocado", "persin", "raw eggs", "raw meat", "raw fish", "bones", "fat trimmings", "yeast dough", "xylitol", "artificial sweeteners", "milk", "cream", "cheese", "dairy products", "mushrooms", "salt", "sodium", "sugary foods", "fatty foods"],
                 "allergenes_interdits": ["milk"],
                 "nutriments_max": {"salt": 2, "sugar": 5},
             },
             "chien": {
-                "ingredients_interdits": ["chocolate", "cacao", "theobromine", "xylitol", "artificial sweeteners", "alcohol", "ethanol", "caffeine", "coffee", "tea", "onions", "garlic", "leeks", "chives", "grapes", "raisins", "sultanas", "currants", "macadamia nuts", "avocado", "persin", "raw yeast dough", "moldy foods", "mycotoxins", "fried foods", "fatty foods", "milk", "cream", "cheese", "dairy products"],
+                "ingredients_interdits": ["chocolate", "cacao", "kakao", "theobromine", "xylitol", "artificial sweeteners", "alcohol", "ethanol", "caffeine", "coffee", "tea", "onions", "garlic", "leeks", "chives", "grapes", "raisins", "sultanas", "currants", "macadamia nuts", "avocado", "persin", "raw yeast dough", "moldy foods", "mycotoxins", "fried foods", "fatty foods", "milk", "cream", "cheese", "dairy products"],
                 "allergenes_interdits": [],
                 "nutriments_max": {"salt": 3, "sugar": 10},
             },
             "lapin": {
-                "ingredients_interdits": ["yogurt drops", "bread", "pasta", "cookies", "crackers", "avocado", "cereal", "muesli", "iceberg lettuce", "silverbeet", "chard", "hamster food", "walnuts", "oatmeal", "chocolate", "peanut butter", "potatoes", "rhubarb", "meat", "cauliflower"],
+                "ingredients_interdits": ["chocolate", "cacao", "kakao", "theobromine", "caffeine", "yogurt drops", "bread", "pasta", "cookies", "crackers", "avocado", "cereal", "muesli", "iceberg lettuce", "silverbeet", "chard", "hamster food", "walnuts", "oatmeal", "chocolate", "peanut butter", "potatoes", "rhubarb", "meat", "cauliflower"],
                 "allergenes_interdits": ["eggs"],
                 "nutriments_max": {"sugar": 2},
             }
@@ -54,12 +54,14 @@ class AnimalFoodChecker:
 
     def analyser_ingredients(self, ingredients, animal):
         ingredients_lower = [ing.lower().strip() for ing in ingredients]
+        print(ingredients, ingredients_lower)
         ingredients_interdits = self.animal_restrictions[animal]["ingredients_interdits"]
 
         problemes = []
         for ingredient in ingredients_interdits:
             if any(ingredient in ing for ing in ingredients_lower):
                 problemes.append(f"Contient {ingredient}")
+        print(problemes)
         return problemes
 
 
