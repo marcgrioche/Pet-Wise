@@ -54,14 +54,14 @@ class AnimalFoodChecker:
 
     def analyser_ingredients(self, ingredients, animal):
         ingredients_lower = [ing.lower().strip() for ing in ingredients]
-        print(ingredients, ingredients_lower)
+        print("Ingredients :", ingredients_lower)
         ingredients_interdits = self.animal_restrictions[animal]["ingredients_interdits"]
 
         problemes = []
         for ingredient in ingredients_interdits:
             if any(ingredient in ing for ing in ingredients_lower):
                 problemes.append(f"Contient {ingredient}")
-        print(problemes)
+        print("Problemes trouvées :", problemes)
         return problemes
 
 

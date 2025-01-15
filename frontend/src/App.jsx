@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Camera, Search, Plus, Edit2, X, Check, Barcode, Trash2 } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from './components/ui/Alert';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/Dialog';
@@ -6,23 +6,66 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/u
 const App = () => {
   const [activeTab, setActiveTab] = useState('search');
   const [barcode, setBarcode] = useState('');
-  const [profileName, setProfileName] = useState('Sylvie');
   const [isEditingName, setIsEditingName] = useState(false);
-  const [tempName, setTempName] = useState('Sylvie');
   const [showAddPetDialog, setShowAddPetDialog] = useState(false);
   const [newPetName, setNewPetName] = useState('');
   const [newPetType, setNewPetType] = useState('');
   const [selectedPet, setSelectedPet] = useState(null);
 
-  const [pets, setPets] = useState([
-    { id: 1, name: 'Fripouille', type: 'chien' },
-    { id: 2, name: 'Pu-Yi', type: 'chat' }
-  ]);
+  // Initialize state from localStorage with fallback values
+  const [profileName, setProfileName] = useState(() => {
+    const savedName = localStorage.getItem('profileName');
+    return savedName || 'Sylvie';
+  });
+
+  const [tempName, setTempName] = useState(() => {
+    const savedName = localStorage.getItem('profileName');
+    return savedName || 'Sylvie';
+  });
+
+  const [pets, setPets] = useState(() => {
+    const savedPets = localStorage.getItem('pets');
+    return savedPets ? JSON.parse(savedPets) : [
+      { id: 1, name: 'Fripouille', type: 'chien' },
+      { id: 2, name: 'Pu-Yi', type: 'chat' }
+    ];
+  });
 
   const fileInputRef = useRef();
   const [result, setResult] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Save to localStorage whenever profileName changes
+  useEffect(() => {
+    localStorage.setItem('profileName', profileName);
+  }, [profileName]);
+
+  // Save to localStorage whenever pets array changes
+  useEffect(() => {
+    localStorage.setItem('pets', JSON.stringify(pets));
+  }, [pets]);
+
+  // Save selected pet to localStorage
+  useEffect(() => {
+    if (selectedPet) {
+      localStorage.setItem('selectedPet', JSON.stringify(selectedPet));
+    } else {
+      localStorage.removeItem('selectedPet');
+    }
+  }, [selectedPet]);
+
+  // Restore selected pet on initial load
+  useEffect(() => {
+    const savedSelectedPet = localStorage.getItem('selectedPet');
+    if (savedSelectedPet) {
+      const parsedPet = JSON.parse(savedSelectedPet);
+      // Verify the pet still exists in the pets array
+      if (pets.some(pet => pet.id === parsedPet.id)) {
+        setSelectedPet(parsedPet);
+      }
+    }
+  }, []); // Empty dependency array means this runs once on mount
 
   const handleNameSave = () => {
     setProfileName(tempName);
@@ -37,7 +80,7 @@ const App = () => {
   const handleAddPet = () => {
     if (newPetName && newPetType) {
       const newPet = {
-        id: pets.length + 1,
+        id: Date.now(), // Use timestamp as ID for better uniqueness
         name: newPetName,
         type: newPetType
       };
@@ -49,13 +92,14 @@ const App = () => {
   };
 
   const handleDeletePet = (petId, e) => {
-    e.stopPropagation(); // Prevent pet selection when clicking delete
+    e.stopPropagation();
     if (selectedPet?.id === petId) {
       setSelectedPet(null);
     }
     setPets(pets.filter(pet => pet.id !== petId));
   };
 
+  // Rest of your code remains the same...
   const getAnimalEmoji = (type) => {
     switch (type.toLowerCase()) {
       case 'chien': return '🐕';
@@ -128,7 +172,7 @@ const App = () => {
     }
     setIsLoading(false);
   };
-
+  
   return (
     <div className="min-h-screen bg-orange-50">
       {/* Top Navigation */}
