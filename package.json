@@ -4,9 +4,8 @@
   },
   "homepage": "https://marcgrioche.github.io/Pet-Wise",
   "scripts": {
-  "predeploy": "cd frontend && npm run build",
-  "deploy": "gh-pages -d frontend/build"
-}
-
+    "predeploy": "cd frontend && npm run build",
+    "deploy": "cp .nojekyll frontend/build/ && gh-pages -d frontend/build"
+  }
 }
 
