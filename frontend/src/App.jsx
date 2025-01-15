@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Search, Plus, Edit2, X, Check, Barcode } from 'lucide-react';
+import { Camera, Search, Plus, Edit2, X, Check, Barcode, Trash2 } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from './components/ui/Alert';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/Dialog';
 
@@ -46,6 +46,14 @@ const App = () => {
       setNewPetType('');
       setShowAddPetDialog(false);
     }
+  };
+
+  const handleDeletePet = (petId, e) => {
+    e.stopPropagation(); // Prevent pet selection when clicking delete
+    if (selectedPet?.id === petId) {
+      setSelectedPet(null);
+    }
+    setPets(pets.filter(pet => pet.id !== petId));
   };
 
   const getAnimalEmoji = (type) => {
@@ -232,17 +240,27 @@ const App = () => {
             </div>
 
             {pets.map((pet) => (
-              <button
+              <div
                 key={pet.id}
-                onClick={() => setSelectedPet(pet)}
                 className={`w-full bg-white p-4 rounded-xl flex items-center space-x-3 border-2
                   ${selectedPet?.id === pet.id ? 'border-orange-400' : 'border-transparent'}`}
               >
-                <span className="text-2xl">{getAnimalEmoji(pet.type)}</span>
-                <div className="flex-1 text-left">
-                  <h3 className="font-semibold">{pet.name}</h3>
-                </div>
-              </button>
+                <button
+                  onClick={() => setSelectedPet(pet)}
+                  className="flex-1 flex items-center space-x-3"
+                >
+                  <span className="text-2xl">{getAnimalEmoji(pet.type)}</span>
+                  <div className="flex-1 text-left">
+                    <h3 className="font-semibold">{pet.name}</h3>
+                  </div>
+                </button>
+                <button
+                  onClick={(e) => handleDeletePet(pet.id, e)}
+                  className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
             ))}
 
             <button
