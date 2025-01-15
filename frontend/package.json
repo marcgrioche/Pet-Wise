@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://marcgrioche.github.io/Pet-Wise",
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.4",
     "autoprefixer": "^10.4.20",
