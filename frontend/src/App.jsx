@@ -14,60 +14,62 @@ const App = () => {
   const [newPetType, setNewPetType] = useState('');
   const [selectedPet, setSelectedPet] = useState(null);
 
-  // Initialize state from localStorage with fallback values
+  // Initialize state from localStorage with empty default values
   const [profileName, setProfileName] = useState(() => {
     const savedName = localStorage.getItem('profileName');
-    return savedName || 'Sylvie';
+    return savedName || '';
   });
 
   const [tempName, setTempName] = useState(() => {
     const savedName = localStorage.getItem('profileName');
-    return savedName || 'Sylvie';
+    return savedName || '';
   });
 
+  // Initialize pets array as empty by default
   const [pets, setPets] = useState(() => {
     const savedPets = localStorage.getItem('pets');
-    return savedPets ? JSON.parse(savedPets) : [
-      { id: 1, name: 'Fripouille', type: 'chien' },
-      { id: 2, name: 'Pu-Yi', type: 'chat' }
-    ];
+    return savedPets ? JSON.parse(savedPets) : [];
   });
 
   const fileInputRef = useRef();
   const [result, setResult] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPetSelection, setShowPetSelection] = useState(false);
 
-  // Save to localStorage whenever profileName changes
   useEffect(() => {
     localStorage.setItem('profileName', profileName);
   }, [profileName]);
 
-  // Save to localStorage whenever pets array changes
   useEffect(() => {
     localStorage.setItem('pets', JSON.stringify(pets));
   }, [pets]);
 
-  // Save selected pet to localStorage
   useEffect(() => {
     if (selectedPet) {
       localStorage.setItem('selectedPet', JSON.stringify(selectedPet));
+      setShowPetSelection(false);
     } else {
       localStorage.removeItem('selectedPet');
     }
   }, [selectedPet]);
 
-  // Restore selected pet on initial load
   useEffect(() => {
     const savedSelectedPet = localStorage.getItem('selectedPet');
     if (savedSelectedPet) {
       const parsedPet = JSON.parse(savedSelectedPet);
-      // Verify the pet still exists in the pets array
       if (pets.some(pet => pet.id === parsedPet.id)) {
         setSelectedPet(parsedPet);
       }
     }
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
+
+  // Check if pet is selected when switching to search or camera tabs
+  useEffect(() => {
+    if ((activeTab === 'search' || activeTab === 'camera') && !selectedPet) {
+      setShowPetSelection(true);
+    }
+  }, [activeTab, selectedPet]);
 
   const handleNameSave = () => {
     setProfileName(tempName);
@@ -82,7 +84,7 @@ const App = () => {
   const handleAddPet = () => {
     if (newPetName && newPetType) {
       const newPet = {
-        id: Date.now(), // Use timestamp as ID for better uniqueness
+        id: Date.now(),
         name: newPetName,
         type: newPetType
       };
@@ -101,7 +103,6 @@ const App = () => {
     setPets(pets.filter(pet => pet.id !== petId));
   };
 
-  // Rest of your code remains the same...
   const getAnimalEmoji = (type) => {
     switch (type.toLowerCase()) {
       case 'chien': return '🐕';
@@ -114,6 +115,7 @@ const App = () => {
   const checkBarcode = async () => {
     if (!selectedPet) {
       setError('Veuillez sélectionner un animal');
+      setShowPetSelection(true);
       return;
     }
     if (!barcode) {
@@ -141,10 +143,10 @@ const App = () => {
     setIsLoading(false);
   };
 
-
   const handleImageUpload = async (e) => {
     if (!selectedPet) {
       setError('Veuillez sélectionner un animal');
+      setShowPetSelection(true);
       return;
     }
 
@@ -159,7 +161,7 @@ const App = () => {
     formData.append('animal', selectedPet.type);
 
     try {
-      const response = await fetch(`${API_URL}/api/scan-image`, { // Make sure the correct endpoint is used
+      const response = await fetch(`${API_URL}/api/scan-image`, {
         method: 'POST',
         body: formData,
       });
@@ -175,7 +177,6 @@ const App = () => {
     }
     setIsLoading(false);
   };
-
 
   return (
     <div className="min-h-screen bg-orange-50">
@@ -208,8 +209,15 @@ const App = () => {
         </div>
       )}
 
+      {/* Pet Selection Alert */}
+      {showPetSelection && !selectedPet && (activeTab === 'search' || activeTab === 'camera') && (
+        <div className="fixed top-16 w-full bg-yellow-100 p-2 text-center text-yellow-800">
+          Veuillez sélectionner un animal dans l'onglet animal 🐾
+        </div>
+      )}
+
       {/* Main Content */}
-      <div className={`pt-16 ${selectedPet ? 'mt-8' : ''} p-4`}>
+      <div className={`pt-16 ${(selectedPet || showPetSelection) ? 'mt-8' : ''} p-4`}>
         {/* Search Tab */}
         {activeTab === 'search' && (
           <div className="space-y-4">
@@ -257,34 +265,39 @@ const App = () => {
         {/* Pets Tab */}
         {activeTab === 'pets' && (
           <div className="space-y-4">
-            <div className="bg-gray-100 p-4 rounded-xl flex items-center space-x-3">
-              <img src="/api/placeholder/48/48" alt="Profile" className="w-12 h-12 rounded-full" />
-              <div className="flex-1">
-                {isEditingName ? (
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={tempName}
-                      onChange={(e) => setTempName(e.target.value)}
-                      className="px-2 py-1 rounded border border-orange-300 flex-1"
-                    />
-                    <button onClick={handleNameSave} className="text-green-600">
-                      <Check size={20} />
-                    </button>
-                    <button onClick={handleNameCancel} className="text-red-600">
-                      <X size={20} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold">{profileName}</h3>
-                    <button onClick={() => setIsEditingName(true)} className="text-orange-600">
-                      <Edit2 size={16} />
-                    </button>
-                  </div>
-                )}
+            <div className="bg-gray-100 p-4 rounded-xl">
+              <div className="flex items-center space-x-3 max-w-full overflow-hidden">
+                <img src="/api/placeholder/48/48" alt="Profile" className="w-12 h-12 rounded-full flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  {isEditingName ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={tempName}
+                        onChange={(e) => setTempName(e.target.value)}
+                        placeholder="Insérer votre nom"
+                        className="px-2 py-1 rounded border border-orange-300 flex-1 min-w-0"
+                      />
+                      <button onClick={handleNameSave} className="text-green-600 flex-shrink-0">
+                        <Check size={20} />
+                      </button>
+                      <button onClick={handleNameCancel} className="text-red-600 flex-shrink-0">
+                        <X size={20} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <h3 className="font-semibold truncate">
+                        {profileName || <span className="text-gray-400">Insérer votre nom</span>}
+                      </h3>
+                      <button onClick={() => setIsEditingName(true)} className="text-orange-600 flex-shrink-0">
+                        <Edit2 size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <span className="text-xl flex-shrink-0">👑</span>
               </div>
-              <span className="text-xl">👑</span>
             </div>
 
             {pets.map((pet) => (
