@@ -3,6 +3,8 @@ import { Camera, Search, Plus, Edit2, X, Check, Barcode, Trash2 } from 'lucide-r
 import { Alert, AlertTitle, AlertDescription } from './components/ui/Alert';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/Dialog';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const App = () => {
   const [activeTab, setActiveTab] = useState('search');
   const [barcode, setBarcode] = useState('');
@@ -122,7 +124,7 @@ const App = () => {
     setIsLoading(true);
     setError('');
     try {
-      const response = await fetch('http://localhost:5000/api/check-barcode', {
+      const response = await fetch(`${API_URL}/api/check-barcode`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ barcode, animal: selectedPet.type }),
@@ -156,7 +158,7 @@ const App = () => {
     formData.append('animal', selectedPet.type);
 
     try {
-      const response = await fetch('http://localhost:5000/api/scan-image', {
+      const response = await fetch(`${API_URL}/api/check-barcode`, {
         method: 'POST',
         body: formData,
       });
@@ -172,7 +174,7 @@ const App = () => {
     }
     setIsLoading(false);
   };
-  
+
   return (
     <div className="min-h-screen bg-orange-50">
       {/* Top Navigation */}

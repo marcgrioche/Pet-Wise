@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from animal_food_checker import AnimalFoodChecker
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=['https://marcgrioche.github.io'])
 
 checker = AnimalFoodChecker()
 
@@ -36,7 +36,6 @@ def scan_image():
     if file.filename == '':
         return jsonify({'error': 'Aucun fichier sélectionné'}), 400
 
-    # Créer un fichier temporaire pour sauvegarder l'image
     temp_dir = tempfile.mkdtemp()
     temp_path = os.path.join(temp_dir, secure_filename(file.filename))
     file.save(temp_path)
@@ -48,11 +47,10 @@ def scan_image():
 
         result = checker.verifier_compatibilite(barcode, animal)
         return jsonify({'result': result, 'barcode': barcode})
-
     finally:
-        # Nettoyer les fichiers temporaires
         os.remove(temp_path)
         os.rmdir(temp_dir)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
