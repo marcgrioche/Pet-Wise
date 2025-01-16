@@ -141,6 +141,7 @@ const App = () => {
     setIsLoading(false);
   };
 
+
   const handleImageUpload = async (e) => {
     if (!selectedPet) {
       setError('Veuillez sélectionner un animal');
@@ -158,7 +159,7 @@ const App = () => {
     formData.append('animal', selectedPet.type);
 
     try {
-      const response = await fetch(`${API_URL}/api/check-barcode`, {
+      const response = await fetch(`${API_URL}/api/scan-image`, { // Make sure the correct endpoint is used
         method: 'POST',
         body: formData,
       });
@@ -174,6 +175,7 @@ const App = () => {
     }
     setIsLoading(false);
   };
+
 
   return (
     <div className="min-h-screen bg-orange-50">
