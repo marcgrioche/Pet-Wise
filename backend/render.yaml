@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: animal-food-checker
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    build:
+      apt:
+        packages:
+          - libzbar0
