@@ -4,10 +4,8 @@
   },
   "homepage": "https://marcgrioche.github.io/Pet-Wise",
   "scripts": {
-  "predeploy": "cd frontend && npm install && npm run build",
-  "deploy": "git add build && git commit -m \"Deploy build\" && git push origin main"
+    "predeploy": "cd frontend && npm install && npm run build",
+    "deploy": "gh-pages -d frontend/build"
   }
-
-
 }
 
