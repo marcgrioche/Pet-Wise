@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Pet-Wise/static/css/main.701ce461.css",
-    "main.js": "/Pet-Wise/static/js/main.fe30043b.js",
+    "main.css": "/Pet-Wise/static/css/main.a0d2a3d6.css",
+    "main.js": "/Pet-Wise/static/js/main.255756d0.js",
     "static/js/488.e75445ad.chunk.js": "/Pet-Wise/static/js/488.e75445ad.chunk.js",
     "index.html": "/Pet-Wise/index.html",
-    "main.701ce461.css.map": "/Pet-Wise/static/css/main.701ce461.css.map",
-    "main.fe30043b.js.map": "/Pet-Wise/static/js/main.fe30043b.js.map",
+    "main.a0d2a3d6.css.map": "/Pet-Wise/static/css/main.a0d2a3d6.css.map",
+    "main.255756d0.js.map": "/Pet-Wise/static/js/main.255756d0.js.map",
     "488.e75445ad.chunk.js.map": "/Pet-Wise/static/js/488.e75445ad.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.701ce461.css",
-    "static/js/main.fe30043b.js"
+    "static/css/main.a0d2a3d6.css",
+    "static/js/main.255756d0.js"
   ]
 }
